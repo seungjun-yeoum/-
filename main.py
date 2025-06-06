@@ -27,20 +27,20 @@ def webhook():
     res = requests.get(url, headers=headers)
     soup = BeautifulSoup(res.text, 'html.parser')
 
-    characters = soup.select('li.item')
-    found = False
+characters = soup.select("ul.ranking_list > li")  # ← 수정 포인트
 
-    for char in characters:
-        name_tag = char.select_one('dd[data-charactername]')
-        if name_tag and name_tag['data-charactername'] == nickname:
-            job_tag = char.select_one('dl:has(dt:contains("클래스")) dd')
-            power_tag = char.select_one('dl:has(dt:contains("전투력")) dd')
-            job = job_tag.text.strip() if job_tag else "N/A"
-            power = power_tag.text.strip() if power_tag else "N/A"
-            sheet.update_cell(row, 2, power)
-            sheet.update_cell(row, 3, job)
-            found = True
-            break
+for char in characters:
+    name_tag = char.select_one("dd.data-charactername")
+    if name_tag and name_tag.text.strip() == nickname:
+        job_tag = char.select_one("dd:has(dt:contains('전투력')) + dd")  # 정확한 셀렉터
+        power_tag = char.select_one("dd:has(dt:contains('클래스')) + dd")
+
+        job = job_tag.text.strip() if job_tag else "없음"
+        power = power_tag.text.strip() if power_tag else "없음"
+
+        sheet.update_cell(row, 2, power)
+        sheet.update_cell(row, 3, job)
+        break
 
     if not found:
         sheet.update_cell(row, 2, "없음")
