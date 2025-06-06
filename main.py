@@ -32,15 +32,21 @@ characters = soup.select("ul.ranking_list > li")  # ← 수정 포인트
 for char in characters:
     name_tag = char.select_one("dd.data-charactername")
     if name_tag and name_tag.text.strip() == nickname:
-        job_tag = char.select_one("dd:has(dt:contains('전투력')) + dd")  # 정확한 셀렉터
-        power_tag = char.select_one("dd:has(dt:contains('클래스')) + dd")
+        job, power = "없음", "없음"
+        dts = char.select("dt")
+        dds = char.select("dd")
 
-        job = job_tag.text.strip() if job_tag else "없음"
-        power = power_tag.text.strip() if power_tag else "없음"
+        for i, dt in enumerate(dts):
+            dt_text = dt.get_text(strip=True)
+            if dt_text == "전투력":
+                power = dds[i].get_text(strip=True)
+            elif dt_text == "클래스":
+                job = dds[i].get_text(strip=True)
 
         sheet.update_cell(row, 2, power)
         sheet.update_cell(row, 3, job)
         break
+
 
     if not found:
         sheet.update_cell(row, 2, "없음")
