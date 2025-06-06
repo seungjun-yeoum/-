@@ -52,8 +52,7 @@ for char in characters:
         sheet.update_cell(row, 2, "없음")
         sheet.update_cell(row, 3, "없음")
 
-    return jsonify({"status": "ok"})
-
+    return jsonify({"status": "ok"})  # ✅ 들여쓰기 되어 있어야 함
 if __name__ == "__main__":
     import os
     port = int(os.environ.get("PORT", 5000))
