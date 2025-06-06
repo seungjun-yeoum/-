@@ -8,7 +8,7 @@ import os
 app = Flask(__name__)
 
 # 환경 변수에서 시트 이름을 가져옴
-SHEET_NAME = os.getenv("GOOGLE_SHEET_NAME", "마비노기 길드원 랭킹")
+SHEET_NAME = os.getenv("GOOGLE_SHEET_NAME", "마비노기 랭킹")
 
 # 구글 시트 인증
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
@@ -49,4 +49,6 @@ def webhook():
     return jsonify({"status": "ok"})
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    import os
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
